@@ -1,112 +1,117 @@
 public class ALU {
+    public Bit32 sum;
     public boolean carry;
     public boolean zero;
     public boolean negative;
     public boolean overflow;
     public boolean sign;
 
-    public I32 execute(Opcode opcode, I32 a) {
-        return execute(opcode, a, new I32(0), false);
+    public void execute(Opcode opcode, Bit32 a) {
+        execute(opcode, a, new Bit32(0), false);
     }
 
-    public I32 execute(Opcode opcode, I32 a, I32 b) {
-        return execute(opcode, a, b, false);
+    public void execute(Opcode opcode, Bit32 a, Bit32 b) {
+        execute(opcode, a, b, false);
     }
 
-    public I32 execute(Opcode opcode, I32 a, I32 b, boolean carry) {
+    public void execute(Opcode opcode, Bit32 a, Bit32 b, boolean carry) {
         switch (opcode) {
             case Add:
-                return add(a, b, carry);
+                add(a, b, carry);
+                break;
             case Sub:
-               return sub(a, b, carry);
+                sub(a, b, carry);
+                break;
             case Increment:
-                return increment(a);
+                increment(a);
+                break;
             case Decrement:
-                return decrement(a);
+                decrement(a);
+                break;
             case TwoComplement:
-                return twoComplement(a);
+                twoComplement(a);
+                break;
             case OneComplement:
-                return oneComplement(a);
+                oneComplement(a);
+                break;
             case And:
-                return and(a, b);
+                and(a, b);
+                break;
             case Or:
-                return or(a, b);
+                or(a, b);
+                break;
             case Xor:
-                return xor(a, b);
+                xor(a, b);
+                break;
             case LeftShift:
-                return leftShift(a);
+                leftShift(a);
+                break;
             case RightShift:
-                return rightShift(a);
+                rightShift(a);
+                break;
             case LeftRotate:
-                return leftRotate(a);
+                leftRotate(a);
+                break;
             case RightRotate:
-                return rightRotate(a);
+                rightRotate(a);
+                break;
             default:
                 throw new IllegalArgumentException("Invalid opcode");
         }
     }
-    private I32 add(I32 a, I32 b, boolean carry) {
-        // Implement the add operation
-        return null;
+
+    private void add(Bit32 a, Bit32 b, boolean carry) {
+        Adder32 adder = new Adder32();
+        adder.add(a, b, carry);
+        this.sum = adder.sum;
+        this.carry = adder.carry;
     }
 
-    private I32 sub(I32 a, I32 b, boolean carry) {
-        // Implement the sub operation
-        return null;
+    private void sub(Bit32 a, Bit32 b, boolean carry) {
+        // Implement the subtract operation
     }
 
-    private I32 increment(I32 a) {
+    private void increment(Bit32 a) {
         // Implement the increment operation
-        return null;
     }
 
-    private I32 decrement(I32 a) {
+    private void decrement(Bit32 a) {
         // Implement the decrement operation
-        return null;
     }
 
-    private I32 twoComplement(I32 a) {
+    private void twoComplement(Bit32 a) {
         // Implement the two's complement operation
-        return null;
     }
 
-    private I32 oneComplement(I32 a) {
+    private void oneComplement(Bit32 a) {
         // Implement the one's complement operation
-        return null;
     }
 
-    private I32 and(I32 a, I32 b) {
+    private void and(Bit32 a, Bit32 b) {
         // Implement the and operation
-        return null;
     }
 
-    private I32 or(I32 a, I32 b) {
+    private void or(Bit32 a, Bit32 b) {
         // Implement the or operation
-        return null;
     }
 
-    private I32 xor(I32 a, I32 b) {
+    private void xor(Bit32 a, Bit32 b) {
         // Implement the xor operation
-        return null;
     }
 
-    private I32 leftShift(I32 a) {
+    private void leftShift(Bit32 a) {
         // Implement the left shift operation
-        return null;
     }
 
-    private I32 rightShift(I32 a) {
+    private void rightShift(Bit32 a) {
         // Implement the right shift operation
-        return null;
     }
 
-    private I32 leftRotate(I32 a) {
+    private void leftRotate(Bit32 a) {
         // Implement the left rotate operation
-        return null;
     }
 
-    private I32 RightRotate(I32 a) {
+    private void rightRotate(Bit32 a) {
         // Implement the right rotate operation
-        return null;
     }
 }
