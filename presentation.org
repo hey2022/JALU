@@ -1,0 +1,46 @@
+#+title: Presentation
+
+* ALU class
+** Addition
+Similar to how we do the addition in real life, the binary addition can be carried out in
+a similar way.
+*** 1 bit
+For 1 bit number, we can find the results by truth table:
+| a | b | result |
+|---+---+--------|
+| 0 | 0 |     00 |
+| 0 | 1 |     01 |
+| 1 | 0 |     01 |
+| 1 | 1 |     10 |
+Here, we can find out that the left digit of result is a and b,
+and right digit of result is a xor b.
+*** bits
+From the previous table, we find that we can split the result as 2 parts
+sum and carry, where sum is the right digit and carry is the left.
+| a | b | carry | sum |
+|---+---+-------+-----|
+| 0 | 0 |     0 |   0 |
+| 0 | 1 |     0 |   1 |
+| 1 | 0 |     0 |   1 |
+| 1 | 1 |     1 |   0 |
+The carry will be used in to the next digit in calculation. Finally
+we can have a table for each digit in bits addition:
+| previous carry | a | b | sum | carry |
+|----------------+---+---+-----+-------|
+|              0 | 0 | 0 |   0 |     0 |
+|              1 | 0 | 0 |   1 |     0 |
+|              0 | 1 | 0 |   1 |     0 |
+|              1 | 1 | 0 |   0 |     1 |
+|              0 | 1 | 1 |   0 |     1 |
+|              1 | 1 | 1 |   1 |     1 |
+** Subtraction
+If we want to subtract a number from a number, ALU doesn't actually subtract it,
+instead it plus the *negative* value of the number to the number.
+*** example
+If we want to do 5 - 2; in binary they are 101 and 010.
+1. We find the complement of 010 which is 101
+2. We *add* the 101 to 101 with a positive adder
+    1   <- here is the carry
+  101
++ 101
+=====
