@@ -2,9 +2,6 @@ public class ALU {
     public Bit32 sum;
     public boolean carry;
     public boolean zero;
-    public boolean negative;
-    public boolean overflow;
-    public boolean sign;
 
     public void execute(final Opcode opcode, final Bit32 a) {
         execute(opcode, a, new Bit32(0), false);
