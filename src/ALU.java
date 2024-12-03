@@ -6,21 +6,21 @@ public class ALU {
     public boolean overflow;
     public boolean sign;
 
-    public void execute(Opcode opcode, Bit32 a) {
+    public void execute(final Opcode opcode, final Bit32 a) {
         execute(opcode, a, new Bit32(0), false);
     }
 
-    public void execute(Opcode opcode, Bit32 a, Bit32 b) {
+    public void execute(final Opcode opcode, final Bit32 a, final Bit32 b) {
         execute(opcode, a, b, false);
     }
 
-    public void execute(Opcode opcode, Bit32 a, Bit32 b, boolean carry) {
+    public void execute(final Opcode opcode, final Bit32 a, final Bit32 b, final boolean carry) {
         switch (opcode) {
             case Add:
                 add(a, b, carry);
                 break;
             case Sub:
-                sub(a, b, carry);
+                sub(a, b);
                 break;
             case Increment:
                 increment(a);
@@ -60,58 +60,79 @@ public class ALU {
         }
     }
 
-    private void add(Bit32 a, Bit32 b, boolean carry) {
-        Adder32 adder = new Adder32();
+    private void add(final Bit32 a, final Bit32 b, final boolean carry) {
+        final Adder32 adder = new Adder32();
         adder.add(a, b, carry);
         this.sum = adder.sum;
         this.carry = adder.carry;
     }
 
-    private void sub(Bit32 a, Bit32 b, boolean carry) {
-        // Implement the subtract operation
+    private void sub(final Bit32 a, final Bit32 b) {
+        oneComplement(b);
+        add(a,sum,true);
     }
 
-    private void increment(Bit32 a) {
-        // Implement the increment operation
+    private void increment(final Bit32 a) {
+        add(a,new Bit32(1),false);
     }
 
-    private void decrement(Bit32 a) {
-        // Implement the decrement operation
+    private void decrement(final Bit32 a) {
+        sub(a,new Bit32(1));
     }
 
-    private void twoComplement(Bit32 a) {
-        // Implement the two's complement operation
+    private void twoComplement(final Bit32 a) {
+        oneComplement(a);
+        increment(sum);
     }
 
-    private void oneComplement(Bit32 a) {
-        // Implement the one's complement operation
+    private void oneComplement(final Bit32 a) {
+        for (int i = 0; i < 32; i++) {
+            sum.setBit(i, !a.getBit(i));
+        }
     }
 
-    private void and(Bit32 a, Bit32 b) {
-        // Implement the and operation
+    private void and(final Bit32 a, final Bit32 b) {
+        for (int i=0; i<32; i++) {
+            sum.setBit(i, a.getBit(i) && b.getBit(i));
+        }
     }
 
-    private void or(Bit32 a, Bit32 b) {
-        // Implement the or operation
+    private void or(final Bit32 a, final Bit32 b) {
+        for (int i=0; i<32; i++) {
+            sum.setBit(i, a.getBit(i) || b.getBit(i));
+        }
     }
 
-    private void xor(Bit32 a, Bit32 b) {
-        // Implement the xor operation
+    private void xor(final Bit32 a, final Bit32 b) {
+        for (int i=0; i<32; i++) {
+            sum.setBit(i, a.getBit(i) ^ b.getBit(i));
+        }
     }
 
-    private void leftShift(Bit32 a) {
-        // Implement the left shift operation
+    private void leftShift(final Bit32 a) {
+        for (int i = 0; i < 32; i++) {
+            sum.setBit(i, a.getBit(i+1));
+        }
     }
 
-    private void rightShift(Bit32 a) {
-        // Implement the right shift operation
+    private void rightShift(final Bit32 a) {
+        for (int i = 31; i > 0; i--) {
+            sum.setBit(i, a.getBit(i-1));
+        }
     }
 
-    private void leftRotate(Bit32 a) {
-        // Implement the left rotate operation
+    private void leftRotate(final Bit32 a) {
+        for (int i = 0; i < 31; i++) {
+            sum.setBit(i, a.getBit(i+1));
+        }
+        sum.setBit(31, a.getBit(0));
     }
 
-    private void rightRotate(Bit32 a) {
-        // Implement the right rotate operation
+    private void rightRotate(final Bit32 a) {
+        for (int i = 31; i > 0; i--) {
+            sum.setBit(i, a.getBit(i-1));
+        }
+        sum.setBit(0, a.getBit(31));
     }
+
 }
