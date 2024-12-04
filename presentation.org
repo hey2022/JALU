@@ -1,6 +1,144 @@
 #+title: Presentation
 
-* ALU class
+* Bit
+The ALU can only process binary data which is basically 0s and 1s, therefore
+in this project we use a Bit class to simulate it:
+#+begin_src java
+public abstract class Bit {
+    private boolean[] bits;
+    public Bit() {
+        this.bits = new boolean[getBitLength()];
+    }
+    public Bit(boolean[] bits) {
+        setBits(bits);
+    }
+    public Bit(String string) {
+        setString(string);
+    }
+    public Bit(int number) {
+        setInt(number);
+    }
+    public abstract int getBitLength();
+    public void setBits(boolean[] number) {
+        // ...
+    }
+    public boolean[] bits() {
+        return this.bits;
+    }
+    public void setInt(int number) {
+        // ...
+    }
+    public int toInt() {
+        // ...
+    }
+    public void setString(String string) {
+        // ...
+    }
+    public String toString() {
+        // ...
+    }
+    public boolean getBit(int index) {
+        // ...
+    }
+    public void setBit(int index, boolean value) {
+        // ...
+    }
+}
+
+#+end_src
+This powerful bit class can get and set the value of bit in forms of boolean array, integer, string, and the length of the bits.
+From this, we can extent all the needed bits as the data types in ALU.
+
+* ALU
+In ALU, the result of calculation would be stored into accessible 32bits variable called sum.
+** Opcode
+Since ALU can function differently (add, sub, ...), an opcode is needed, in this project we decide using
+enum to store the opcode.
+#+begin_src java
+public enum Opcode {
+    Add,
+    Sub,
+    Increment,
+    Decrement,
+    TwoComplement,
+    OneComplement,
+    And,
+    Or,
+    Xor,
+    LeftShift,
+    RightShift,
+    LeftRotate,
+    RightRotate,
+}
+#+end_src
+Instead of using a if-elesIf to decide which command should be executed, switch is used to make the code clearer.
+#+begin_src java
+    public void execute(final Opcode opcode, final Bit32 a, final Bit32 b, final boolean carry) {
+        switch (opcode) {
+            case Add:
+                add(a, b, carry);
+                break;
+            case Sub:
+                sub(a, b);
+                break;
+            case Increment:
+                increment(a);
+                break;
+            case Decrement:
+                decrement(a);
+                break;
+            case TwoComplement:
+                twoComplement(a);
+                break;
+            case OneComplement:
+                oneComplement(a);
+                break;
+            case And:
+                and(a, b);
+                break;
+            case Or:
+                or(a, b);
+                break;
+            case Xor:
+                xor(a, b);
+                break;
+            case LeftShift:
+                leftShift(a);
+                break;
+            case RightShift:
+                rightShift(a);
+                break;
+            case LeftRotate:
+                leftRotate(a);
+                break;
+            case RightRotate:
+                rightRotate(a);
+                break;
+            default:
+                throw new IllegalArgumentException("Invalid opcode");
+        }
+    }
+#+end_src
+** Logical operations
+In java, All of logical operations for boolean are builtin,
+so we just simply carry it out.
+#+begin_src java
+    private void and(final Bit32 a, final Bit32 b) {
+        for (int i=0; i<32; i++) {
+            sum.setBit(i, a.getBit(i) && b.getBit(i));
+        }
+    }
+    private void or(final Bit32 a, final Bit32 b) {
+        for (int i=0; i<32; i++) {
+            sum.setBit(i, a.getBit(i) || b.getBit(i));
+        }
+    }
+    private void xor(final Bit32 a, final Bit32 b) {
+        for (int i=0; i<32; i++) {
+            sum.setBit(i, a.getBit(i) ^ b.getBit(i));
+        }
+    }
+#+end_src
 ** Addition
 Similar to how we do the addition in real life, the binary addition can be carried out in
 a similar way.
@@ -23,24 +161,85 @@ sum and carry, where sum is the right digit and carry is the left.
 | 0 | 1 |     0 |   1 |
 | 1 | 0 |     0 |   1 |
 | 1 | 1 |     1 |   0 |
+Then, a half adder can be implemented:
+#+begin_src java
+class HalfAdder {
+  public boolean sum;
+  public boolean carry;
+
+  public void add(boolean a, boolean b) {
+    this.sum = a ^ b;
+    this.carry = a && b;
+  }
+}
+#+end_src
 The carry will be used in to the next digit in calculation. Finally
 we can have a table for each digit in bits addition:
-| previous carry | a | b | sum | carry |
-|----------------+---+---+-----+-------|
-|              0 | 0 | 0 |   0 |     0 |
-|              1 | 0 | 0 |   1 |     0 |
-|              0 | 1 | 0 |   1 |     0 |
-|              1 | 1 | 0 |   0 |     1 |
-|              0 | 1 | 1 |   0 |     1 |
-|              1 | 1 | 1 |   1 |     1 |
+| previous carry | a | b | carry | sum |
+|----------------+---+---+-------+-----|
+|              0 | 0 | 0 |     0 |   0 |
+|              1 | 0 | 0 |     0 |   1 |
+|              0 | 1 | 0 |     0 |   1 |
+|              1 | 1 | 0 |     1 |   0 |
+|              0 | 1 | 1 |     1 |   0 |
+|              1 | 1 | 1 |     1 |   1 |
+By this, we can have a full adder:
+#+begin_src java
+class FullAdder {
+    boolean sum;
+    boolean carry;
+
+    public void add(boolean a, boolean b, boolean c) {
+        HalfAdder halfAdder1 = new HalfAdder();
+        HalfAdder halfAdder2 = new HalfAdder();
+        halfAdder1.add(a, b);
+        halfAdder2.add(halfAdder1.sum, c);
+        this.sum = halfAdder2.sum;
+        this.carry = halfAdder1.carry || halfAdder2.carry;
+    }
+}
+#+end_src
+By doing so, an adder for 32bits can be done!
+*** example
+Here is an example of how to add 5 and 2
+    0 <- here is the carry
+  101
++ 010
+=====
+  111
+
+** Complement
+Complement is an essential function, it helps the ALU to handle subtraction and negative
+number. In this project, two forms of complement are implemented.
+#+begin_src java
+    private void increment(final Bit32 a) {
+        add(a,new Bit32(1),false);
+    }
+    private void oneComplement(final Bit32 a) {
+        for (int i = 0; i < 32; i++) {
+            sum.setBit(i, !a.getBit(i));
+        }
+    }
+    private void twoComplement(final Bit32 a) {
+        oneComplement(a);
+        increment(sum);
+    }
+#+end_src
 ** Subtraction
 If we want to subtract a number from a number, ALU doesn't actually subtract it,
 instead it plus the *negative* value of the number to the number.
+#+begin_src java
+    private void sub(final Bit32 a, final Bit32 b) {
+        oneComplement(b);
+        add(a,sum,true);
+    }
+#+end_src
 *** example
-If we want to do 5 - 2; in binary they are 101 and 010.
+If we want to do 5 - 2; in binary they are 101 and 010 which are 3 digit bits.
 1. We find the complement of 010 which is 101
 2. We *add* the 101 to 101 with a positive adder
-    1   <- here is the carry
+ 1011   <- here is the carry, the carry for 4th digit will be ignored.
   101
 + 101
 =====
+  011
