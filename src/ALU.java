@@ -107,15 +107,17 @@ public class ALU {
     }
 
     private void leftShift(final Bit32 a) {
-        for (int i = 0; i < 32; i++) {
-            sum.setBit(i, a.getBit(i+1));
+        for (int i = 0; i < 31; i++) {
+            sum.setBit(i, a.getBit(i + 1));
         }
+        sum.setBit(31, false); // Set the last bit to 0 (as the left shift shifts in 0)
     }
 
     private void rightShift(final Bit32 a) {
         for (int i = 31; i > 0; i--) {
-            sum.setBit(i, a.getBit(i-1));
+            sum.setBit(i, a.getBit(i - 1));
         }
+        sum.setBit(0, false); // Set the first bit to 0 (as the right shift shifts in 0)
     }
 
     private void leftRotate(final Bit32 a) {
