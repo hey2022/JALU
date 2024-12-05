@@ -1,7 +1,7 @@
-class FullAdder {
-    boolean sum;
-    boolean carry;
+public class FullAdder {
+    public boolean sum;
 
+    public boolean carry;
     public void add(boolean a, boolean b, boolean c) {
         HalfAdder halfAdder1 = new HalfAdder();
         HalfAdder halfAdder2 = new HalfAdder();

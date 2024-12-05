@@ -1,6 +1,6 @@
 import java.util.Arrays;
 
-class Adder8 {
+public class Adder8 {
     public Bit8 sum;
     public boolean carry;
 
